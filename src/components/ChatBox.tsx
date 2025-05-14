@@ -1,16 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { useEditor } from '@/contexts/EditorContext';
-import { useToast } from '@/hooks/use-toast';
-import { Send, Copy, ArrowUp, MessageCircle, Trash } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { useEditor } from "@/contexts/EditorContext";
+import { useToast } from "@/hooks/use-toast";
+import { Send, Copy, ArrowUp, MessageCircle, Trash } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   code?: string;
   language?: string;
 }
@@ -20,7 +20,7 @@ const initialMessages: Message[] = [
   {
     id: "1",
     role: "user",
-    content: "Make a responsive navbar with logo and links"
+    content: "Make a responsive navbar with logo and links",
   },
   {
     id: "2",
@@ -36,7 +36,7 @@ const initialMessages: Message[] = [
           <div className="flex items-center py-4">
             <span className="font-bold text-xl">MyApp</span>
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
@@ -49,7 +49,7 @@ const initialMessages: Message[] = [
               </svg>
             </button>
           </div>
-          
+
           {/* Desktop menu */}
           <div className="hidden md:flex items-center space-x-4">
             <a href="#" className="py-2 px-3 hover:bg-gray-700 rounded">Home</a>
@@ -59,9 +59,9 @@ const initialMessages: Message[] = [
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
-      <div className={${isOpen ? "block" : "hidden"} md:hidden}>
+      <div className={\`\${isOpen ? "block" : "hidden"} md:hidden\`}>
         <div className="px-2 pt-2 pb-4 space-y-1">
           <a href="#" className="block px-3 py-2 hover:bg-gray-700 rounded">Home</a>
           <a href="#" className="block px-3 py-2 hover:bg-gray-700 rounded">About</a>
@@ -72,12 +72,12 @@ const initialMessages: Message[] = [
     </nav>
   );
 }`,
-    language: "jsx"
+    language: "jsx",
   },
   {
     id: "3",
     role: "user",
-    content: "Create a simple counter component"
+    content: "Create a simple counter component",
   },
   {
     id: "4",
@@ -99,12 +99,12 @@ const initialMessages: Message[] = [
     </div>
   );
 }`,
-    language: "jsx"
+    language: "jsx",
   },
   {
     id: "5",
     role: "user",
-    content: "Create a dark mode toggle switch"
+    content: "Create a dark mode toggle switch",
   },
   {
     id: "6",
@@ -140,14 +140,14 @@ function DarkModeToggle() {
     </button>
   );
 }`,
-    language: "jsx"
-  }
+    language: "jsx",
+  },
 ];
 
 export function ChatBox({ className }: { className?: string }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState('');
-  const [previousInput, setPreviousInput] = useState('');
+  const [input, setInput] = useState("");
+  const [previousInput, setPreviousInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
@@ -155,39 +155,39 @@ export function ChatBox({ className }: { className?: string }) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { activeFile, updateFile } = useEditor();
   const { toast } = useToast();
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-    
+
     // Store current input for history
     setPreviousInput(input);
-    
+
     // Add user message
     const newUserMessage: Message = {
       id: Date.now().toString(),
       content: input,
-      role: 'user'
+      role: "user",
     };
-    setMessages(prev => [...prev, newUserMessage]);
-    setInput('');
+    setMessages((prev) => [...prev, newUserMessage]);
+    setInput("");
     setIsTyping(true);
-    
+
     // Simulate AI response after a delay
     setTimeout(() => {
       // Simple response selection
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: "Here's a simple component based on your request:",
-        role: 'assistant',
+        role: "assistant",
         code: `function ExampleComponent() {
   const [state, setState] = useState(false);
   
@@ -204,34 +204,34 @@ export function ChatBox({ className }: { className?: string }) {
     </div>
   );
 }`,
-        language: 'jsx'
+        language: "jsx",
       };
-      setMessages(prev => [...prev, newAiMessage]);
+      setMessages((prev) => [...prev, newAiMessage]);
       setIsTyping(false);
     }, 1500);
   };
-  
+
   const insertCode = (code: string) => {
     if (activeFile) {
       updateFile(activeFile.id, code);
       toast({
         title: "Code inserted",
-        description: "Code has been inserted into the editor"
+        description: "Code has been inserted into the editor",
       });
     } else {
       toast({
         title: "No file selected",
         description: "Please select or create a file first",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
-  
+
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     toast({
       title: "Copied to clipboard",
-      description: "Code has been copied to clipboard"
+      description: "Code has been copied to clipboard",
     });
   };
 
@@ -239,15 +239,15 @@ export function ChatBox({ className }: { className?: string }) {
     setMessages([]);
     toast({
       title: "Chat cleared",
-      description: "All messages have been removed"
+      description: "All messages have been removed",
     });
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
-    } else if (e.key === 'ArrowUp' && input === '' && previousInput) {
+    } else if (e.key === "ArrowUp" && input === "" && previousInput) {
       e.preventDefault();
       setInput(previousInput);
     }
@@ -257,7 +257,7 @@ export function ChatBox({ className }: { className?: string }) {
   if (!isOpen) {
     return (
       <div className={cn("fixed bottom-4 right-4 z-50", className)}>
-        <Button 
+        <Button
           onClick={() => setIsOpen(true)}
           size="icon"
           className="h-12 w-12 rounded-full shadow-lg"
@@ -267,20 +267,24 @@ export function ChatBox({ className }: { className?: string }) {
       </div>
     );
   }
-  
+
   return (
-    <div className={cn(
-      "flex flex-col bg-white dark:bg-gray-900 border-t shadow-lg",
-      className,
-      isCollapsed ? "h-12" : "h-[500px]"
-    )}>
+    <div
+      className={cn(
+        "flex flex-col bg-white dark:bg-gray-900 border-t shadow-lg",
+        className,
+        isCollapsed ? "h-12" : "h-[500px]"
+      )}
+    >
       <div className="p-2 border-b flex items-center justify-between bg-muted/50">
-        <h2 className={cn("text-sm font-medium", isCollapsed && "hidden")}>Chat Assistant</h2>
+        <h2 className={cn("text-sm font-medium", isCollapsed && "hidden")}>
+          Chat Assistant
+        </h2>
         <div className="flex gap-1">
           {!isCollapsed && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={clearChat}
               className="h-8 w-8 text-muted-foreground"
               title="Clear chat"
@@ -288,9 +292,9 @@ export function ChatBox({ className }: { className?: string }) {
               <Trash className="h-4 w-4" />
             </Button>
           )}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="h-8 w-8"
             title={isCollapsed ? "Expand chat" : "Collapse chat"}
@@ -299,51 +303,57 @@ export function ChatBox({ className }: { className?: string }) {
           </Button>
         </div>
       </div>
-      
+
       {!isCollapsed && (
         <>
           <div className="flex-1 overflow-auto p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="text-center text-muted-foreground p-4">
                 <p>Ask me to generate code for you!</p>
-                <p className="text-sm mt-2">Example: "Create a navbar with logo and links"</p>
+                <p className="text-sm mt-2">
+                  Example: "Create a navbar with logo and links"
+                </p>
               </div>
             ) : (
               messages.map((message) => (
-                <div 
-                  key={message.id} 
+                <div
+                  key={message.id}
                   className={cn(
                     "flex flex-col max-w-[85%] rounded-lg",
-                    message.role === 'user' ? "ml-auto items-end" : ""
+                    message.role === "user" ? "ml-auto items-end" : ""
                   )}
                 >
-                  <div className={cn(
-                    "rounded-lg p-4",
-                    message.role === 'user' 
-                      ? "bg-primary text-primary-foreground" 
-                      : "bg-muted"
-                  )}>
-                    <div className="text-sm whitespace-pre-wrap">{message.content}</div>
+                  <div
+                    className={cn(
+                      "rounded-lg p-4",
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    )}
+                  >
+                    <div className="text-sm whitespace-pre-wrap">
+                      {message.content}
+                    </div>
                   </div>
-                  
+
                   {message.code && (
                     <Card className="mt-2 overflow-hidden shadow-sm w-full">
                       <div className="bg-black text-white p-3 text-xs overflow-x-auto">
                         <pre>{message.code}</pre>
                       </div>
                       <div className="p-1 bg-background flex justify-end gap-1">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-7 text-xs"
                           onClick={() => copyCode(message.code!)}
                         >
                           <Copy className="h-3 w-3 mr-1" />
                           Copy
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-7 text-xs"
                           onClick={() => insertCode(message.code!)}
                         >
@@ -367,7 +377,7 @@ export function ChatBox({ className }: { className?: string }) {
             )}
             <div ref={messagesEndRef} />
           </div>
-          
+
           <form onSubmit={handleSubmit} className="p-3 border-t bg-background">
             <div className="flex relative">
               <Textarea
@@ -378,17 +388,18 @@ export function ChatBox({ className }: { className?: string }) {
                 className="min-h-[60px] pr-12 resize-none rounded-md"
                 onKeyDown={handleKeyDown}
               />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 size="icon"
-                className="absolute right-2 bottom-2" 
+                className="absolute right-2 bottom-2"
                 disabled={!input.trim()}
               >
                 <Send className="h-4 w-4" />
               </Button>
             </div>
             <div className="text-xs text-muted-foreground mt-2 px-2">
-              Press Enter to send, Shift+Enter for new line, ↑ for previous prompt
+              Press Enter to send, Shift+Enter for new line, ↑ for previous
+              prompt
             </div>
           </form>
         </>
