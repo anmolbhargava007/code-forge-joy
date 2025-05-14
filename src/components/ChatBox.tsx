@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -254,6 +253,7 @@ export function ChatBox({ className }: { className?: string }) {
     }
   };
 
+  // Make sure the conditional rendering correctly checks isOpen state
   if (!isOpen) {
     return (
       <div className={cn("fixed bottom-4 right-4 z-50", className)}>
