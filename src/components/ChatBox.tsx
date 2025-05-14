@@ -22,6 +22,7 @@ export function ChatBox({ className }: { className?: string }) {
   const [previousInput, setPreviousInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // Add missing isOpen state
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { activeFile, updateFile } = useEditor();
