@@ -1,7 +1,6 @@
-
 import { Button } from '@/components/ui/button';
 import { useEditor } from '@/contexts/EditorContext';
-import { ThemeSwitcher } from './ThemeSwitcher';
+import { ThemeSelector } from './ThemeSelector';
 import {
   Save,
   Download,
@@ -149,58 +148,7 @@ export function EditorToolbar() {
       </div>
       
       <div className="flex items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <Code className="h-4 w-4 mr-2" />
-              Editor Theme
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Select Theme</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setEditorTheme('vs')}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setEditorTheme('vs-dark')}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setEditorTheme('hc-black')}>
-              High Contrast
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Options</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {
-              toast({
-                title: "Auto-save Enabled",
-                description: "Your code will be automatically saved"
-              });
-            }}>
-              Enable Auto-save
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {
-              toast({
-                title: "Format on Save Enabled",
-                description: "Your code will be formatted when saved"
-              });
-            }}>
-              Format on Save
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <ThemeSwitcher />
+        <ThemeSelector />
       </div>
     </div>
   );
