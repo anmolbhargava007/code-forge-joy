@@ -16,37 +16,18 @@ interface Message {
   language?: string;
 }
 
-export function ChatBox({ className }: { className?: string }) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [previousInput, setPreviousInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isOpen, setIsOpen] = useState(false); // Add missing isOpen state
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { activeFile, updateFile } = useEditor();
-  const { toast } = useToast();
-  
-  // For demonstration purposes - mock responses
-  const dummyResponses = [
-    {
-      text: "Here's a simple React component for a button:",
-      code: `function Button({ children, onClick }) {
-  return (
-    <button 
-      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-}`,
-      language: 'jsx'
-    },
-    {
-      text: "Let's create a responsive navbar with Tailwind CSS:",
-      code: `function Navbar() {
+// Example dummy Q&A data
+const initialMessages: Message[] = [
+  {
+    id: "1",
+    role: "user",
+    content: "Make a responsive navbar with logo and links"
+  },
+  {
+    id: "2",
+    role: "assistant",
+    content: "Here's a simple responsive navbar using React and Tailwind CSS:",
+    code: `function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   
   return (
@@ -92,24 +73,89 @@ export function ChatBox({ className }: { className?: string }) {
     </nav>
   );
 }`,
-      language: 'jsx'
-    },
-    {
-      text: "Here's a card component with Tailwind CSS:",
-      code: `function Card({ title, description, imageUrl }) {
+    language: "jsx"
+  },
+  {
+    id: "3",
+    role: "user",
+    content: "Create a simple counter component"
+  },
+  {
+    id: "4",
+    role: "assistant",
+    content: "Here's a simple counter component using React and Tailwind CSS:",
+    code: `function Counter() {
+  const [count, setCount] = useState(0);
+
+  // Increment the counter
+  function handleIncrement() {
+    setCount(count + 1);
+  }
+
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg">
-      {imageUrl && <img className="w-full" src={imageUrl} alt={title} />}
-      <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">{title}</div>
-        <p className="text-gray-700 text-base">{description}</p>
-      </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Counter App</h1>
+      <p className="mb-4">Current count: {count}</p>
+      <Button onClick={handleIncrement}>Increment</Button>
     </div>
   );
 }`,
-      language: 'jsx'
+    language: "jsx"
+  },
+  {
+    id: "5",
+    role: "user",
+    content: "Create a dark mode toggle switch"
+  },
+  {
+    id: "6",
+    role: "assistant",
+    content: "Here's a simple dark mode toggle using React hooks:",
+    code: `import { useState, useEffect } from 'react';
+
+function DarkModeToggle() {
+  const [darkMode, setDarkMode] = useState(false);
+  
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  ];
+  }, [darkMode]);
+
+  return (
+    <button
+      onClick={() => setDarkMode(!darkMode)}
+      className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 transition-colors"
+    >
+      {darkMode ? (
+        <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+        </svg>
+      ) : (
+        <svg className="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        </svg>
+      )}
+    </button>
+  );
+}`,
+    language: "jsx"
+  }
+];
+
+export function ChatBox({ className }: { className?: string }) {
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [input, setInput] = useState('');
+  const [previousInput, setPreviousInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { activeFile, updateFile } = useEditor();
+  const { toast } = useToast();
   
   useEffect(() => {
     scrollToBottom();
@@ -138,13 +184,28 @@ export function ChatBox({ className }: { className?: string }) {
     
     // Simulate AI response after a delay
     setTimeout(() => {
-      const randomResponse = dummyResponses[Math.floor(Math.random() * dummyResponses.length)];
+      // Simple response selection
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: randomResponse.text,
+        content: "Here's a simple component based on your request:",
         role: 'assistant',
-        code: randomResponse.code,
-        language: randomResponse.language
+        code: `function ExampleComponent() {
+  const [state, setState] = useState(false);
+  
+  return (
+    <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md">
+      <h2 className="text-xl font-bold mb-2">Example Component</h2>
+      <p className="text-gray-600">This is an example component based on your request.</p>
+      <button 
+        onClick={() => setState(!state)}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        {state ? 'Active' : 'Inactive'}
+      </button>
+    </div>
+  );
+}`,
+        language: 'jsx'
       };
       setMessages(prev => [...prev, newAiMessage]);
       setIsTyping(false);
@@ -192,12 +253,26 @@ export function ChatBox({ className }: { className?: string }) {
       setInput(previousInput);
     }
   };
+
+  if (!isOpen) {
+    return (
+      <div className={cn("fixed bottom-4 right-4 z-50", className)}>
+        <Button 
+          onClick={() => setIsOpen(true)}
+          size="icon"
+          className="h-12 w-12 rounded-full shadow-lg"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </Button>
+      </div>
+    );
+  }
   
   return (
     <div className={cn(
-      "flex flex-col h-full border-l", 
-      className, 
-      isCollapsed && "w-12"
+      "flex flex-col bg-white dark:bg-gray-900 border-t shadow-lg",
+      className,
+      isCollapsed ? "h-12" : "h-[500px]"
     )}>
       <div className="p-2 border-b flex items-center justify-between bg-muted/50">
         <h2 className={cn("text-sm font-medium", isCollapsed && "hidden")}>Chat Assistant</h2>
