@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { useEditor } from '@/contexts/EditorContext';
 import { ThemeSelector } from './ThemeSelector';
@@ -62,7 +63,6 @@ export function EditorToolbar() {
   };
   
   const handleShare = () => {
-    // In a real app, we'd generate a shareable link
     navigator.clipboard.writeText(window.location.href);
     
     toast({
