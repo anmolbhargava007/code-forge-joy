@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useEditor } from "@/contexts/EditorContext";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Copy, ArrowUp, MessageCircle, Trash } from "lucide-react";
+import { Send, Copy, MessageCircle, Trash, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -16,7 +16,7 @@ interface Message {
   language?: string;
 }
 
-// Example initial welcome message
+// Simple welcome message
 const initialMessages: Message[] = [
   {
     id: "welcome",
@@ -41,7 +41,6 @@ export function ChatBox({ className }: { className?: string }) {
     scrollToBottom();
   }, [messages]);
   
-  // Effect to automatically insert the latest code into the editor
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage?.role === "assistant" && lastMessage?.code && activeFile) {
@@ -61,22 +60,19 @@ export function ChatBox({ className }: { className?: string }) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Store current input for history
     setPreviousInput(input);
 
-    // Clear previous messages and add only the new user message
     const newUserMessage: Message = {
       id: Date.now().toString(),
       content: input,
       role: "user",
     };
-    setMessages([newUserMessage]);
+    setMessages(prev => [...prev, newUserMessage]);
     setInput("");
     setIsTyping(true);
 
     // Simulate AI response after a delay
     setTimeout(() => {
-      // Simple response generation
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: "Here's the code based on your request:",
@@ -130,7 +126,6 @@ export function ChatBox({ className }: { className?: string }) {
     }
   };
 
-  // Make sure the conditional rendering correctly checks isOpen state
   if (!isOpen) {
     return (
       <div className={cn("fixed bottom-4 right-4 z-50", className)}>
@@ -184,56 +179,47 @@ export function ChatBox({ className }: { className?: string }) {
       {!isCollapsed && (
         <>
           <div className="flex-1 overflow-auto p-4 space-y-4">
-            {messages.length === 0 ? (
-              <div className="text-center text-muted-foreground p-4">
-                <p>Ask me to generate code for you!</p>
-                <p className="text-sm mt-2">
-                  Example: "Create a navbar with logo and links"
-                </p>
-              </div>
-            ) : (
-              messages.map((message) => (
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex flex-col max-w-[85%] rounded-lg",
+                  message.role === "user" ? "ml-auto items-end" : ""
+                )}
+              >
                 <div
-                  key={message.id}
                   className={cn(
-                    "flex flex-col max-w-[85%] rounded-lg",
-                    message.role === "user" ? "ml-auto items-end" : ""
+                    "rounded-lg p-4",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
                   )}
                 >
-                  <div
-                    className={cn(
-                      "rounded-lg p-4",
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    )}
-                  >
-                    <div className="text-sm whitespace-pre-wrap">
-                      {message.content}
-                    </div>
+                  <div className="text-sm whitespace-pre-wrap">
+                    {message.content}
                   </div>
-
-                  {message.code && message.role === "assistant" && (
-                    <Card className="mt-2 overflow-hidden shadow-sm w-full">
-                      <div className="bg-black text-white p-3 text-xs overflow-x-auto">
-                        <pre>{message.code}</pre>
-                      </div>
-                      <div className="p-1 bg-background flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 text-xs"
-                          onClick={() => copyCode(message.code!)}
-                        >
-                          <Copy className="h-3 w-3 mr-1" />
-                          Copy
-                        </Button>
-                      </div>
-                    </Card>
-                  )}
                 </div>
-              ))
-            )}
+
+                {message.code && message.role === "assistant" && (
+                  <Card className="mt-2 overflow-hidden shadow-sm w-full">
+                    <div className="bg-black text-white p-3 text-xs overflow-x-auto">
+                      <pre>{message.code}</pre>
+                    </div>
+                    <div className="p-1 bg-background flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => copyCode(message.code!)}
+                      >
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                  </Card>
+                )}
+              </div>
+            ))}
             {isTyping && (
               <div className="bg-muted rounded-lg p-4 max-w-[85%]">
                 <div className="flex gap-1">
@@ -266,8 +252,7 @@ export function ChatBox({ className }: { className?: string }) {
               </Button>
             </div>
             <div className="text-xs text-muted-foreground mt-2 px-2">
-              Press Enter to send, Shift+Enter for new line, ↑ for previous
-              prompt
+              Press Enter to send, Shift+Enter for new line, ↑ for previous prompt
             </div>
           </form>
         </>

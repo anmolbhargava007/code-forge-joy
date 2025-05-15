@@ -6,11 +6,14 @@ import { FileTabs } from './FileTabs';
 import { EditorToolbar } from './EditorToolbar';
 import { ChatBox } from './ChatBox';
 import { VersionHistory } from './VersionHistory';
-import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Sidebar } from './Sidebar';
+import { Button } from '@/components/ui/button';
+import { Code, Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function EditorLayout() {
   const [showChat, setShowChat] = useState(true);
+  const [viewMode, setViewMode] = useState<'code' | 'preview'>('preview');
   
   return (
     <div className="h-screen flex">
@@ -23,21 +26,42 @@ export function EditorLayout() {
         <FileTabs />
         <VersionHistory className="border-b" />
         
+        {/* View mode toggle */}
+        <div className="border-b p-1 flex justify-between items-center">
+          <div className="flex items-center gap-2 px-2">
+            <Button 
+              variant={viewMode === 'code' ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => setViewMode('code')}
+              className="flex items-center gap-1"
+            >
+              <Code size={16} />
+              <span>Code</span>
+            </Button>
+            <Button 
+              variant={viewMode === 'preview' ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => setViewMode('preview')}
+              className="flex items-center gap-1"
+            >
+              <Eye size={16} />
+              <span>Preview</span>
+            </Button>
+          </div>
+        </div>
+        
         <div className="flex-1 overflow-hidden">
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={60} minSize={25}>
-              <CodeEditor className="h-full" />
-            </ResizablePanel>
-            <ResizablePanel defaultSize={40} minSize={25}>
-              <LivePreview className="h-full" />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          {viewMode === 'code' ? (
+            <CodeEditor className="h-full" />
+          ) : (
+            <LivePreview className="h-full" />
+          )}
         </div>
       </div>
       
       {/* Chat panel fixed at bottom */}
       {showChat && (
-        <ChatBox className="fixed bottom-0 left-0 right-0 z-50" />
+        <ChatBox className="fixed bottom-0 left-60 right-0 z-50" />
       )}
     </div>
   );
